@@ -24,7 +24,7 @@ public class WarMedia extends WarGamepad
             if (info.metaData != null && info.metaData.getBoolean("samp.appExternalStorage", false)) {
                 File files = getExternalFilesDir(null);
                 if (files == null) throw new IllegalStateException("Game storage unavailable");
-                this.baseDirectoryRoot = files.getParentFile().getAbsolutePath();
+                this.baseDirectoryRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
                 return files.getAbsolutePath() + "/";
             }
         } catch (android.content.pm.PackageManager.NameNotFoundException e) {
