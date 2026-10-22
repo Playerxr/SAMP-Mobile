@@ -51,6 +51,9 @@ jobs:
               p.afterEvaluate {
                   if (p.plugins.hasPlugin('com.android.application')) {
                       def android = p.extensions.getByName('android')
+                      if (p.hasProperty('ciTestInstall')) {
+                          android.defaultConfig.applicationId = 'com.samp.mobile.test'
+                      }
                       def ciSigning = android.signingConfigs.create('ciDebug')
                       ciSigning.storeFile = new File(System.getenv('CI_KEYSTORE'))
                       ciSigning.storePassword = 'android'
@@ -74,6 +77,34 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SAMP-Mobile-GTA-2.10-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Prepare isolated test package
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import copy, json, pathlib
+          path = pathlib.Path('app/google-services.json')
+          config = json.loads(path.read_text())
+          client = copy.deepcopy(next(c for c in config['client']
+              if c['client_info']['android_client_info']['package_name'] == 'com.samp.mobile'))
+          client['client_info']['android_client_info']['package_name'] = 'com.samp.mobile.test'
+          config['client'].append(client)
+          path.write_text(json.dumps(config))
+          PY
+
+      - name: Build isolated test APK
+        shell: bash
+        run: |
+          ./gradlew --no-daemon --stacktrace --max-workers=2 \
+            --init-script "$RUNNER_TEMP/samp-ci.gradle" -PciTestInstall=true :app:assembleDebug
+
+      - name: Upload isolated test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SAMP-Mobile-GTA-2.10-isolated-test
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
