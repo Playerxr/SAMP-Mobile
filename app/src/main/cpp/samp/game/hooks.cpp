@@ -1848,7 +1848,8 @@ void InstallSpecialHooks()
 {
     InjectHooks();
 
-    InstallUrezHooks();
+    // Preserve native PVR/ETC/DXT paths for standard GTA 2.10 caches.
+    // InstallUrezHooks rewrites PVR paths to DXT for reduced DXT-only caches.
 
 	//InstallCRHooks(); //call this when using the CRMP cache
 
