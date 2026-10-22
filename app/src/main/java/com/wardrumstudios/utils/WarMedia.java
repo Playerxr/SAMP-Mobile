@@ -16,6 +16,20 @@ public class WarMedia extends WarGamepad
     private String baseDirectoryRoot;
 
     public String GetGameBaseDirectory() {
+        // An embedding launcher may keep the cache in its own external files.
+        // The standalone client retains the shared /GTA directory.
+        try {
+            android.content.pm.ApplicationInfo info = getPackageManager().getApplicationInfo(
+                    getPackageName(), android.content.pm.PackageManager.GET_META_DATA);
+            if (info.metaData != null && info.metaData.getBoolean("samp.appExternalStorage", false)) {
+                File files = getExternalFilesDir(null);
+                if (files == null) throw new IllegalStateException("Game storage unavailable");
+                this.baseDirectoryRoot = files.getParentFile().getAbsolutePath();
+                return files.getAbsolutePath() + "/";
+            }
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
         if (Environment.getExternalStorageState().equals("mounted"))
         {
             try

@@ -22,10 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.samp.mobile.R;
-import com.samp.mobile.launcher.MainActivity;
-import com.samp.mobile.launcher.config.Config;
-import com.samp.mobile.launcher.fragments.ServerPagesItemFragment;
-import com.samp.mobile.launcher.fragments.ServersFragment;
 
 import java.io.BufferedReader;
 import java.io.File;

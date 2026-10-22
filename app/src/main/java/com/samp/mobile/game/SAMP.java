@@ -169,6 +169,8 @@ public class SAMP extends GTASA implements CustomKeyboard.InputListener, HeightP
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "**** onCreate");
+        // Also initializes Firebase when the game runs in a launcher process.
+        com.google.firebase.FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
 
         //if(!SignatureChecker.isSignatureValid(this, getPackageName()))
